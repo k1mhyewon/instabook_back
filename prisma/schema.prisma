@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int     @id @default(autoincrement())
+  userName     String  @unique
+  password     String
+  name         String
+  userInfo     String?
+  profilePhoto String?
+
+  followFrom Follow[] @relation("UserFollowFrom")
+  followTo   Follow[] @relation("UserFollowTo")
+
+  posts       Post[]
+  comments    Comment[]
+  PostLike    PostLike[]
+  CommentLike CommentLike[]
+}
+
+model Follow {
+  followFrom     Int
+  followTo       Int
+  userFollowFrom User @relation("UserFollowFrom", fields: [followFrom], references: [id])
+  userFollowTo   User @relation("UserFollowTo", fields: [followTo], references: [id])
+
+  @@id([followTo, followFrom])
+  @@map("Follow")
+}
+
+model Post {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  content    String
+  uploadDate DateTime @default(now())
+  postPhoto  String?
+  viewCount  Int      @default(0)
+  status     Boolean  @default(true)
+
+  user     User       @relation(fields: [userId], references: [id])
+  comments Comment[]
+  likes    PostLike[]
+}
+
+model PostLike {
+  userId Int
+  postId Int
+  user   User @relation(fields: [userId], references: [id])
+  post   Post @relation(fields: [postId], references: [id])
+
+  @@id([userId, postId])
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  postId     Int
+  content    String
+  uploadDate DateTime @default(now())
+  groupNo    Int
+  parentCid  Int
+  depthNo    Int
+  status     Boolean  @default(true)
+
+  user  User          @relation(fields: [userId], references: [id])
+  post  Post          @relation(fields: [postId], references: [id])
+  likes CommentLike[]
+}
+
+model CommentLike {
+  userId    Int
+  commentId Int
+  user      User    @relation(fields: [userId], references: [id])
+  comment   Comment @relation(fields: [commentId], references: [id])
+
+  @@id([userId, commentId])
+}
