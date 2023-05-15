@@ -17,7 +17,7 @@ export class AppController {
   @UseGuards(AuthGuard('google'))
   async googleAuth(@Req() req) {}
 
-  @Get('redirect')
+  @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
   googleAuthRedirect(@Req() req) {
     return this.appService.googleLogin(req);
@@ -28,10 +28,4 @@ export class AppController {
   // async login(@Request() req) {
   //   return this.authService.login(req.user);
   // }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
 }

@@ -67,8 +67,8 @@ model Comment {
   content    String
   uploadDate DateTime @default(now())
   groupNo    Int
-  parentCid  Int
-  depthNo    Int
+  parentCid  Int      @default(0)
+  depthNo    Int      @default(0)
   status     Boolean  @default(true)
 
   user  User          @relation(fields: [userId], references: [id])

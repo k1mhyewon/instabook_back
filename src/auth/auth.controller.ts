@@ -7,10 +7,13 @@ import {
   UseGuards,
   Get,
   Request,
+  ValidationPipe,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { AuthDto } from './dto/auth.dto';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -18,9 +21,46 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: AuthDto) {
-    return this.authService.signIn(signInDto.userName, signInDto.password);
+  signIn(
+    @Body() authDto: AuthDto,
+    // @Res() response: Response,
+    // ): Promise<{ access_token: string }> {
+  ) {
+    const access_token = this.authService.signIn(authDto);
+
+    // res.cookie('jwt', token, { httpOnly: true });
+
+    return this.authService.signIn(authDto);
+    // response.cookie('Authentication', access_token, {
+    //   domain: 'localhost',
+    //   path: '/',
+    //   httpOnly: true,
+    // });
+
+    // console.log('res', response);
+
+    // return access_token;
+    // return this.authService.signIn(signInDto.userName, signInDto.password);
   }
+
+  // @Post('/logIn')
+  // async signIn(
+  //   @Body(ValidationPipe) authDto: AuthDto,
+  //   @Res({ passthrough: true }) response: Response,
+  //   // ): Promise<{ accessToken: string }> {
+  // ) {
+  //   console.log('로그인');
+
+  //   const access_token = await this.authService.signIn(authDto);
+  //   // 토큰쿠키저장
+  //   response.cookie('Authentication', access_token, {
+  //     domain: 'localhost',
+  //     path: '/',
+  //     httpOnly: true,
+  //   });
+  //   console.log('res', response);
+  //   // return access_token;
+  // }
 
   // @Get("login/google")
   // @UseGuards(AuthGuard("google"))

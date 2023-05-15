@@ -3,6 +3,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaClient } from '@prisma/client';
 import { UsersDto } from 'src/users/dto/users.dto';
+import { AuthDto } from './dto/auth.dto';
 
 const prisma = new PrismaClient();
 
@@ -13,13 +14,14 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(userName: string, password: string) {
+  // async signIn(authDto: AuthDto): Promise<{ access_token: string }> {
+  async signIn(authDto: AuthDto) {
     const user = await prisma.user.findFirst({
       where: {
-        userName: userName,
+        userName: authDto.userName,
       },
     });
-    if (user?.password !== password) {
+    if (user?.password !== authDto.password) {
       throw new UnauthorizedException();
     }
 

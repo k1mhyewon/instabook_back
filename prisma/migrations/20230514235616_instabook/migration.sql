@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Comment" ALTER COLUMN "parentCid" SET DEFAULT 0,
+ALTER COLUMN "depthNo" SET DEFAULT 0;
