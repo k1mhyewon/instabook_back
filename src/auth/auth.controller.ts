@@ -14,33 +14,17 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { AuthDto } from './dto/auth.dto';
 import { Response } from 'express';
+import { Public } from 'src/auth.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @HttpCode(HttpStatus.OK)
-  @Post('login')
-  signIn(
-    @Body() authDto: AuthDto,
-    // @Res() response: Response,
-    // ): Promise<{ access_token: string }> {
-  ) {
-    const access_token = this.authService.signIn(authDto);
-
-    // res.cookie('jwt', token, { httpOnly: true });
-
+  // @HttpCode(HttpStatus.OK)
+  @Public()
+  @Post('/login')
+  async signIn(@Body() authDto: AuthDto) {
     return this.authService.signIn(authDto);
-    // response.cookie('Authentication', access_token, {
-    //   domain: 'localhost',
-    //   path: '/',
-    //   httpOnly: true,
-    // });
-
-    // console.log('res', response);
-
-    // return access_token;
-    // return this.authService.signIn(signInDto.userName, signInDto.password);
   }
 
   // @Post('/logIn')
@@ -66,9 +50,9 @@ export class AuthController {
   // @UseGuards(AuthGuard("google"))
   // async loginGoogle(@Req() req: Request & IOAuthUser)
 
-  // @UseGuards(AuthGuard)
-  // @Get('profile')
-  // getProfile(@Request() req) {
-  //   return req.user;
-  // }
+  @UseGuards(AuthGuard)
+  @Get('profile')
+  getProfile(@Request() req) {
+    return req.user;
+  }
 }

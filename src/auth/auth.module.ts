@@ -14,21 +14,21 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 @Module({
   imports: [
     UsersModule,
-    PassportModule,
+    // PassportModule,
     JwtModule.register({
-      // global: true,
+      global: true,
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '1 days' },
     }),
   ],
   providers: [
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: JwtAuthGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
     AuthService,
-    LocalStrategy,
-    JwtStrategy,
+    // LocalStrategy,
+    // JwtStrategy,
   ],
   controllers: [AuthController],
   exports: [AuthService],

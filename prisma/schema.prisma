@@ -49,6 +49,8 @@ model Post {
   user     User       @relation(fields: [userId], references: [id])
   comments Comment[]
   likes    PostLike[]
+  tags     Tag[]      @relation("PostTag")
+  PostTag  PostTag[]
 }
 
 model PostLike {
@@ -60,13 +62,31 @@ model PostLike {
   @@id([userId, postId])
 }
 
+model Tag {
+  // id   Int    @id @default(autoincrement())
+  name String @id
+
+  posts   Post[]    @relation("PostTag")
+  PostTag PostTag[]
+}
+
+model PostTag {
+  postId  Int
+  tagName String
+
+  post Post @relation(fields: [postId], references: [id])
+  tag  Tag  @relation(fields: [tagName], references: [name])
+
+  @@id([postId, tagName])
+}
+
 model Comment {
   id         Int      @id @default(autoincrement())
   userId     Int
   postId     Int
   content    String
   uploadDate DateTime @default(now())
-  groupNo    Int
+  groupNo    Int      @default(0)
   parentCid  Int      @default(0)
   depthNo    Int      @default(0)
   status     Boolean  @default(true)

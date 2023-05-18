@@ -7,10 +7,11 @@ import { UsersController } from './users/users.controller';
 import { GoogleStrategy } from './google.strategy';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
+import { PostsService } from './posts/posts.service';
 
 @Module({
   imports: [AuthModule, UsersModule, PostsModule, CommentsModule],
   controllers: [AppController, UsersController],
-  providers: [AppService, GoogleStrategy],
+  providers: [AppService, GoogleStrategy, PostsService],
 })
 export class AppModule {}
