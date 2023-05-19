@@ -1,11 +1,17 @@
 import {
+  Bind,
   Body,
   Controller,
   Get,
+  HttpStatus,
   Param,
   Post,
   Request,
+  Res,
+  UploadedFile,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersDto } from './dto/users.dto';
@@ -15,6 +21,9 @@ import { Public } from 'src/auth.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { PostsService } from 'src/posts/posts.service';
 import { PostsDto } from 'src/posts/dto/posts.dto';
+import { MulterOptions } from 'src/multer.options';
+import { Response } from 'express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller()
 export class UsersController {
@@ -23,10 +32,40 @@ export class UsersController {
     private postsService: PostsService,
   ) {}
 
+  // @Public()
+  // @Post('register')
+  // async register(@Body() userData: UsersDto): Promise<UsersDto> {
+  //   return this.usersService.createUser(userData);
+  // }
+
   @Public()
-  @Post('register')
-  async register(@Body() userData: UsersDto): Promise<UsersDto> {
-    return this.usersService.createUser(userData);
+  // @UseGuards(AuthGuard)
+  @Post('/register')
+  // @UseInterceptors(AnyFilesInterceptor(MulterOptions)) // AnyFilesInterceptor 사용
+  @UseInterceptors(FilesInterceptor('files', null, MulterOptions))
+  @Bind(UploadedFiles())
+  async register(
+    @UploadedFile() files: Express.Multer.File[], // 파일을 @UploadedFile() 데코레이터로 받아옴
+    @Body() userData: UsersDto, // 문자열 필드를 @Body() 데코레이터로 받아옴
+    @Res() res: Response,
+  ) {
+    const profilePhoto = files
+      ? this.usersService.uploadFileDisk(files)
+      : undefined;
+
+    if (profilePhoto !== undefined) {
+      userData = {
+        ...userData,
+        profilePhoto: profilePhoto.length > 0 ? profilePhoto[0] : null,
+      };
+    }
+
+    await this.usersService.createUser(userData); // 사용자 생성 메서드 호출
+
+    res.status(HttpStatus.OK).json({
+      success: true,
+      data: userData,
+    });
   }
 
   @UseGuards(AuthGuard)
@@ -108,4 +147,10 @@ export class UsersController {
   async getPostsByTagName(@Param('tagName') tagName: string) {
     return this.postsService.getPostsByTagName(tagName);
   }
+
+  /*
+    디스크 방식 파일 업로드 (1)-> Destination 옵션 설정
+    @param {File[]} files 다중 파일
+    @param res Response 객체
+   */
 }

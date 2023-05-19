@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 @Injectable()
 export class CommentsService {
   async createComment(commentData: any) {
-    return await prisma.comment.create({
+    const createComment = await prisma.comment.create({
       data: {
         userId: parseInt(commentData.userId),
         postId: parseInt(commentData.postId),
@@ -17,6 +17,21 @@ export class CommentsService {
         depthNo: commentData.depthNo,
       },
     });
+
+    const newCommentId = createComment.id;
+
+    const newComment = await prisma.comment.findUnique({
+      where: {
+        id: newCommentId,
+      },
+      include: {
+        likes: true,
+        user: {
+          select: { userName: true, id: true, profilePhoto: true },
+        },
+      },
+    });
+    return newComment;
   }
 
   async getCommentWithUserInfo(commentId: string) {

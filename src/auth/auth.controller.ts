@@ -27,29 +27,6 @@ export class AuthController {
     return this.authService.signIn(authDto);
   }
 
-  // @Post('/logIn')
-  // async signIn(
-  //   @Body(ValidationPipe) authDto: AuthDto,
-  //   @Res({ passthrough: true }) response: Response,
-  //   // ): Promise<{ accessToken: string }> {
-  // ) {
-  //   console.log('로그인');
-
-  //   const access_token = await this.authService.signIn(authDto);
-  //   // 토큰쿠키저장
-  //   response.cookie('Authentication', access_token, {
-  //     domain: 'localhost',
-  //     path: '/',
-  //     httpOnly: true,
-  //   });
-  //   console.log('res', response);
-  //   // return access_token;
-  // }
-
-  // @Get("login/google")
-  // @UseGuards(AuthGuard("google"))
-  // async loginGoogle(@Req() req: Request & IOAuthUser)
-
   @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req) {

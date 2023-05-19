@@ -8,6 +8,7 @@ import { GoogleStrategy } from './google.strategy';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { PostsService } from './posts/posts.service';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [AuthModule, UsersModule, PostsModule, CommentsModule],

@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { UsersDto } from './dto/users.dto';
 import { PrismaClient } from '@prisma/client';
 import { Request } from 'express';
+import { uploadFileURL } from 'src/multer.options';
+import { File } from 'node:buffer';
 
 const prisma = new PrismaClient();
 @Injectable()
@@ -15,6 +17,19 @@ export class UsersService {
         userInfo: userData.userInfo ?? undefined,
         profilePhoto: userData.profilePhoto ?? undefined,
       },
+    });
+  }
+
+  /*
+    디스크 방식 파일 업로드 
+    @param files 파일 데이터
+    @returns {String[]} 파일 경로
+   */
+  uploadFileDisk(files: Express.Multer.File[]): string[] {
+    return files.map((file: any) => {
+      // 파일 이름 반환
+      const uploadFile = uploadFileURL(file.filename);
+      return uploadFile;
     });
   }
 

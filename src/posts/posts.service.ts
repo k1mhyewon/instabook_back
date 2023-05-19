@@ -120,12 +120,12 @@ export class PostsService {
           include: {
             likes: true,
             user: {
-              select: { userName: true, id: true },
+              select: { userName: true, id: true, profilePhoto: true },
             },
           },
         },
         user: {
-          select: { userName: true },
+          select: { userName: true, profilePhoto: true, id: true },
         },
       },
       orderBy: {
