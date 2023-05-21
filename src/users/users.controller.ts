@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   Request,
   Res,
   UploadedFile,
@@ -138,8 +139,11 @@ export class UsersController {
   @Get('home/:userId')
   async findAllPostsForHome(
     @Param('userId') userId: string,
+    @Query('page') page: number,
   ): Promise<PostsDto[]> {
-    return this.postsService.findAllPostsForHome(userId);
+    console.log(page);
+    console.log('page');
+    return this.postsService.findAllPostsForHome(userId, page);
   }
 
   @Public()

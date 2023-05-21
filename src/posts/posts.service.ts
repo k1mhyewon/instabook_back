@@ -90,7 +90,7 @@ export class PostsService {
     });
   }
 
-  async findAllPostsForHome(paraUserId: string) {
+  async findAllPostsForHome(paraUserId: string, page: number) {
     const userFollows = await prisma.follow.findMany({
       where: {
         userFollowFrom: {
@@ -105,8 +105,7 @@ export class PostsService {
     const followToIds = userFollows.map((follow) => follow.followTo);
     followToIds.push(parseInt(paraUserId));
 
-    // const pageNumber = 1;
-    // const pageSize = 10;
+    const pageSize = 10;
 
     return await prisma.post.findMany({
       where: {
@@ -131,8 +130,8 @@ export class PostsService {
       orderBy: {
         uploadDate: 'desc',
       },
-      // skip: (pageNumber - 1) * pageSize,
-      // take: pageSize,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
     });
   }
 
