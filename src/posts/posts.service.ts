@@ -79,10 +79,10 @@ export class PostsService {
         comments: {
           include: {
             likes: true,
-            user: { select: { userName: true, id: true } },
+            user: { select: { userName: true, id: true, profilePhoto: true } },
           },
         },
-        user: { select: { userName: true } },
+        user: { select: { userName: true, profilePhoto: true, id: true } },
       },
       orderBy: {
         uploadDate: 'desc',
@@ -200,8 +200,14 @@ export class PostsService {
           postId: parseInt(postId),
         },
       });
+
       // return false;
     }
+    return await prisma.postLike.findMany({
+      where: {
+        postId: parseInt(postId),
+      },
+    });
   }
 
   async getTags(postId: string) {
@@ -222,6 +228,15 @@ export class PostsService {
         post: {
           include: {
             user: true,
+            comments: {
+              include: {
+                likes: true,
+                user: {
+                  select: { userName: true, id: true, profilePhoto: true },
+                },
+              },
+            },
+            likes: true,
           },
         },
       },

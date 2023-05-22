@@ -17,7 +17,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { PostsDto } from './dto/posts.dto';
 import { PostsService } from './posts.service';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { Public } from 'src/auth.decorator';
+import { Public } from 'src/common/auth/auth.decorator';
 import { PostTag } from '@prisma/client';
 import { MulterOptions } from 'src/multer.options';
 import { Response } from 'express';
@@ -91,7 +91,7 @@ export class PostsController {
   async goLike(
     @Param('userId') userId: string,
     @Param('postId') postId: string,
-  ): Promise<void> {
+  ): Promise<any> {
     return this.postsService.goLike(userId, postId);
   }
 

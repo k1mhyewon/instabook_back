@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { CommentsDto } from './dto/comments.dto';
+import { commentLikeDto } from './dto/commentLikes.dto';
 
 const prisma = new PrismaClient();
 
@@ -32,6 +33,57 @@ export class CommentsService {
       },
     });
     return newComment;
+  }
+
+  async goCommentLike(commentData: any) {
+    const commentLike = await prisma.commentLike.findUnique({
+      where: {
+        userId_commentId: {
+          userId: parseInt(commentData.userId),
+          commentId: parseInt(commentData.id),
+        },
+      },
+    });
+    if (commentLike) {
+      await prisma.commentLike.delete({
+        where: {
+          userId_commentId: {
+            userId: parseInt(commentData.userId),
+            commentId: parseInt(commentData.id),
+          },
+        },
+      });
+    } else {
+      await prisma.commentLike.create({
+        data: {
+          userId: parseInt(commentData.userId),
+          commentId: parseInt(commentData.id),
+        },
+      });
+    }
+    return await prisma.commentLike.findMany({
+      where: {
+        commentId: parseInt(commentData.id),
+      },
+    });
+  }
+
+  async getCommentLikeBool(userId: string, commentId: string) {
+    const commentLike = await prisma.commentLike.findUnique({
+      where: {
+        userId_commentId: {
+          userId: parseInt(userId),
+          commentId: parseInt(commentId),
+        },
+      },
+    });
+    if (commentLike) {
+      // 데이터가 존재함
+      return true;
+    } else {
+      // 데이터가 존재하지 않음
+      return false;
+    }
   }
 
   async getCommentWithUserInfo(commentId: string) {

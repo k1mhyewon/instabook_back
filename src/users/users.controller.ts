@@ -17,7 +17,7 @@ import {
 import { UsersService } from './users.service';
 import { UsersDto } from './dto/users.dto';
 // import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { Public } from 'src/auth.decorator';
+import { Public } from 'src/common/auth/auth.decorator';
 // import { AuthGuard } from '@nestjs/passport';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { PostsService } from 'src/posts/posts.service';

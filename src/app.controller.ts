@@ -1,8 +1,17 @@
-import { Controller, Get, Post, Req, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth/auth.service';
-import { Public } from './auth.decorator';
+import { Public } from './common/auth/auth.decorator';
 
 @Controller()
 export class AppController {
@@ -20,9 +29,18 @@ export class AppController {
     return this.appService.googleLogin(req);
   }
 
-  // @UseGuards(LocalAuthGuard)
-  // @Post('auth/login')
-  // async login(@Request() req) {
-  //   return this.authService.login(req.user);
-  // }
+  @Public()
+  @Get('/kakao-callback')
+  @UseGuards(AuthGuard('kakao'))
+  kakaoAuthRedirect(@Req() req) {
+    console.log('req');
+    console.log(req);
+    return this.appService.kakaoLogin(req);
+  }
+
+  @Public()
+  @Post('/kakao-callback')
+  KakaoToken(@Query('authorizationCode') code: string) {
+    return this.appService.kakaoToken(code);
+  }
 }
